@@ -5,6 +5,9 @@ module Lib.Vector where
 type Scalar = Double
 data Vector = Vector [Scalar]
 
+zerovector = Vector [0, 0, 0]
+cameraOrigin = Vector [0.5, 0.5, 0]
+
 undef = error "Undefined behaviour"
 
 instance Num Vector where
@@ -25,8 +28,8 @@ instance Show Vector where
 mul :: Scalar -> Vector -> Vector
 mul s (Vector xs) = Vector (map (* s) xs)
 
-normalise :: Vector -> Vector
-normalise v@(Vector vs) = Vector (map (/mag) vs)
+normalize :: Vector -> Vector
+normalize v@(Vector vs) = Vector (map (/mag) vs)
 	where mag = (sqrt . vectorsum) (v * v)
 
 vectorsum :: Vector -> Scalar
@@ -34,3 +37,6 @@ vectorsum (Vector xs) = sum xs
 
 dot :: Vector -> Vector -> Scalar
 dot (Vector xs) (Vector ys) = sum $ zipWith (*) xs ys
+
+mag :: Vector -> Scalar
+mag vec = sqrt $ dot vec vec
