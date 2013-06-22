@@ -20,11 +20,12 @@ sphereHit ray sphere = case qdformula (dot d d)
 sphereShader :: ShaderFunc
 sphereShader hitpoint sphere = map ( round . ( (*) ratio) . fromIntegral  ) $ colour sphere
 				where
-				ratio = abs $ dot (normalize vecFwd) (normalize normal)
+				ratio = abs $ dot (normalize diffvec) (normalize normal)
+				diffvec = cameraOrigin - (origin sphere)
 				normal = hitpoint - origin sphere
 
-scene = [ (Sphere (Vector [0.5,0.5,10]) 1 [255,0,0] sphereHit sphereShader),
-		  (Sphere (Vector [0.4,0.4,9]) 0.8 [0,0,255] sphereHit sphereShader) ]
+scene = [ (Sphere (Vector [0.5,0.5,10]) 1 [140,255,75] sphereHit sphereShader),
+		  (Sphere (Vector [0.0,1.5,8]) 1 [144,144,220] sphereHit sphereShader) ]
 width = 800
 height = 800
 
