@@ -1,4 +1,9 @@
 module Lib.Scene where
+
+import Data.Ord
+import Data.List
+import Data.Function
+
 import Lib.Vector
 import Lib.Image
 import Lib.Shader
@@ -36,8 +41,12 @@ testRay s r = case hitresult of
 				Just hitpoint -> (shader obj) hitpoint obj
 				Nothing -> bgcolour
 			where
-				obj = head s
-				hitresult = (hit obj) r obj
+				(obj, hitresult) = minimumBy (hitCompare `on` snd) [ (obj, ((hit obj) r obj)) | obj <- s]
+				hitCompare (Just x) (Just y) = compare x y
+				hitCompare (Just x) Nothing = LT
+				hitCompare Nothing (Just y) = GT
+				hitCompare _ _ = EQ
+
 render :: Scene -> Integer -> Integer -> Image
 render scene width height = (width, height, img)
 				where

@@ -18,6 +18,9 @@ instance Num Vector where
 	abs (Vector xs) = error "Vector abs"
 	signum = error "Vector sign"
 
+instance Ord Vector where
+	(<=) xs ys = mag xs <= mag ys
+
 instance Eq Vector where
 	(==) (Vector xs) (Vector ys) = all id (zipWith (==) xs ys)
 

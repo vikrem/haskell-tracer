@@ -23,7 +23,8 @@ sphereShader hitpoint sphere = map ( round . ( (*) ratio) . fromIntegral  ) $ co
 				ratio = abs $ dot (normalize vecFwd) (normalize normal)
 				normal = hitpoint - origin sphere
 
-scene = [ (Sphere (Vector [0.5,0.5,10]) 1 [255,0,0] sphereHit sphereShader) ] 
+scene = [ (Sphere (Vector [0.5,0.5,10]) 1 [255,0,0] sphereHit sphereShader),
+		  (Sphere (Vector [0.4,0.4,9]) 0.8 [0,0,255] sphereHit sphereShader) ]
 width = 800
 height = 800
 
