@@ -8,16 +8,15 @@ data Vector = Vector [Scalar]
 zerovector = Vector [0, 0, 0]
 cameraOrigin = Vector [0.5, 0.5, 0]
 
-undef = error "Undefined behaviour"
 
 instance Num Vector where
 	(+) (Vector xs) (Vector ys) = Vector (zipWith (+) xs ys)
 	(-) (Vector xs) (Vector ys) = Vector (zipWith (-) xs ys)
 	(*) (Vector xs) (Vector ys) = Vector (zipWith (*) xs ys)
 	negate (Vector xs) = Vector (map negate xs)
-	fromInteger x = undef 
-	abs (Vector xs) = undef
-	signum = undef
+	fromInteger x = error "Vector fromint"
+	abs (Vector xs) = error "Vector abs"
+	signum = error "Vector sign"
 
 instance Eq Vector where
 	(==) (Vector xs) (Vector ys) = all id (zipWith (==) xs ys)
