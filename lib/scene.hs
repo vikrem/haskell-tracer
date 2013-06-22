@@ -7,12 +7,12 @@ import Debug.Trace
 bgcolour = [0,0,0]
 
 type Scene = [Surface]
-type ShaderFunc = Ray -> Surface -> Maybe Scalar
+type ShaderFunc = Ray -> Surface -> Maybe Vector
 data Surface = Sphere {
 						origin :: Vector,
 						radius :: Scalar,
 						colour :: Colour,
-						intersectFunc :: ShaderFunc 
+						hitFunc :: ShaderFunc 
 						}
 
 data Ray = Ray { rayOrigin :: Vector, normDir :: Vector }
@@ -29,19 +29,13 @@ cameraRay x y = Ray { rayOrigin = cameraOrigin,
 				  where
 				  distvec = Vector [x, y, 1.0] - cameraOrigin
 vecFwd = Vector [0, 0, 1]
-fromDegrees deg = deg * pi / 180 
-toDegrees   rad = rad * 180 / pi
 testRay :: Scene -> Ray -> Colour
-testRay s ray = case qdformula (dot d d)
-							 (dot (mul 2 (o - c)) d)
-							 ((dot (o - c) (o - c)) - r^2) of
-				   Just _ -> [255,0,0]
-				   Nothing -> bgcolour
-			  where
-			  d = normDir ray
-			  o = rayOrigin ray
-			  r = radius (head s)
-			  c = origin (head s)
+testRay s r = case hitresult of
+				Just _ -> [255, 0, 0]
+				Nothing -> bgcolour
+			where
+				obj = head s
+				hitresult = (hitFunc obj) r obj
 render :: Scene -> Integer -> Integer -> Image
 render scene width height = (width, height, img)
 				where
