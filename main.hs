@@ -4,7 +4,7 @@ import Lib.Scene
 import Lib.Math
 main :: IO ()
 
-sphereHit :: ShaderFunc
+sphereHit :: IntersectFunc
 sphereHit ray sphere = case qdformula (dot d d)
 							 (dot (mul 2 (o - c)) d)
 							 ((dot (o - c) (o - c)) - r^2) of
@@ -17,8 +17,13 @@ sphereHit ray sphere = case qdformula (dot d d)
 			  c = origin sphere
 			  finalHit roots = rayOrigin ray + mul (best roots) (normDir ray) 
 			  best = head . (filter (>0) )
+sphereShader :: ShaderFunc
+sphereShader hitpoint sphere = map ( round . ( (*) ratio) . fromIntegral  ) $ colour sphere
+				where
+				ratio = abs $ dot (normalize vecFwd) (normalize normal)
+				normal = hitpoint - origin sphere
 
-scene = [ (Sphere (Vector [1,1,10]) 1 [255,0,0] sphereHit) ] 
+scene = [ (Sphere (Vector [0.5,0.5,10]) 1 [255,0,0] sphereHit sphereShader) ] 
 width = 800
 height = 800
 

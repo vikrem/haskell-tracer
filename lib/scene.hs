@@ -7,12 +7,14 @@ import Debug.Trace
 bgcolour = [0,0,0]
 
 type Scene = [Surface]
-type ShaderFunc = Ray -> Surface -> Maybe Vector
+type IntersectFunc = Ray -> Surface -> Maybe Vector -- Return the hitpoint (or lack of) on a surface via a ray
+type ShaderFunc = Vector -> Surface -> Colour -- Take in a hitpoint and return a colour
 data Surface = Sphere {
 						origin :: Vector,
 						radius :: Scalar,
 						colour :: Colour,
-						hitFunc :: ShaderFunc 
+						hit :: IntersectFunc,
+						shader :: ShaderFunc
 						}
 
 data Ray = Ray { rayOrigin :: Vector, normDir :: Vector }
@@ -31,11 +33,11 @@ cameraRay x y = Ray { rayOrigin = cameraOrigin,
 vecFwd = Vector [0, 0, 1]
 testRay :: Scene -> Ray -> Colour
 testRay s r = case hitresult of
-				Just _ -> [255, 0, 0]
+				Just hitpoint -> (shader obj) hitpoint obj
 				Nothing -> bgcolour
 			where
 				obj = head s
-				hitresult = (hitFunc obj) r obj
+				hitresult = (hit obj) r obj
 render :: Scene -> Integer -> Integer -> Image
 render scene width height = (width, height, img)
 				where
