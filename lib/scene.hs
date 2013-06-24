@@ -14,10 +14,9 @@ bgcolour = [0,0,0]
 type Scene = [Surface]
 type IntersectFunc = Ray -> Surface -> Maybe Vector -- Return the hitpoint (or lack of) on a surface via a ray
 type ShaderFunc = Vector -> Surface -> Colour -- Take in a hitpoint and return a colour
-
+data ObjectType = Light | Object
 data Surface = Surface {
 						origin :: Vector,
-						radius :: Scalar,
 						hit :: IntersectFunc,
 						shader :: ShaderFunc
 						}

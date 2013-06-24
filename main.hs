@@ -4,8 +4,8 @@ import Lib.Scene
 import Lib.Math
 main :: IO ()
 
-sphereHit :: IntersectFunc
-sphereHit ray sphere = case qdformula (dot d d)
+sphereHit :: Scalar -> IntersectFunc
+sphereHit radius ray sphere = case qdformula (dot d d)
 							 (dot (mul 2 (o - c)) d)
 							 ((dot (o - c) (o - c)) - r^2) of
 				   Just roots -> Just $ finalHit roots
@@ -13,7 +13,7 @@ sphereHit ray sphere = case qdformula (dot d d)
 			  where
 			  d = normDir ray
 			  o = rayOrigin ray
-			  r = radius sphere
+			  r = radius
 			  c = origin sphere
 			  finalHit roots = rayOrigin ray + mul (best roots) (normDir ray) 
 			  best = head . (filter (>0) )
@@ -29,8 +29,8 @@ planeHit ray plane
 					t = numer / denom
 -}
 
-gouradShader :: Colour -> ShaderFunc
-gouradShader diffuseColor hitpoint surf = map ( round . ( (*) ratio) . fromIntegral  ) $ diffuseColor
+cameraShader :: Colour -> ShaderFunc
+cameraShader diffuseColor hitpoint surf = map ( round . ( (*) ratio) . fromIntegral  ) $ diffuseColor
 				where
 				ratio = abs $ dot (normalize diffvec) (normalize normal)
 				diffvec = cameraOrigin - (origin surf)
@@ -40,7 +40,7 @@ emissionShader :: Colour -> ShaderFunc
 emissionShader emitcolour _ _ = emitcolour
 
 scene = [ 
-		  (Surface (Vector [0.7, 0.7, 2]) 0.25 sphereHit (emissionShader [255, 255, 255]))
+		  (Surface (Vector [0.7, 0.7, 2]) (sphereHit 0.25) (emissionShader [255, 255, 255]))
 		  ]
 width = 800
 height = 800
