@@ -14,10 +14,10 @@ bgcolour = [0,0,0]
 type Scene = [Surface]
 type IntersectFunc = Ray -> Surface -> Maybe Vector -- Return the hitpoint (or lack of) on a surface via a ray
 type ShaderFunc = Vector -> Surface -> Colour -- Take in a hitpoint and return a colour
-data Surface = Sphere {
+
+data Surface = Surface {
 						origin :: Vector,
 						radius :: Scalar,
-						colour :: Colour,
 						hit :: IntersectFunc,
 						shader :: ShaderFunc
 						}
@@ -25,10 +25,6 @@ data Surface = Sphere {
 data Ray = Ray { rayOrigin :: Vector, normDir :: Vector }
 instance Show Ray where
 	show r = "[RAY] Origin: " ++ show (rayOrigin r) ++ " Dir: " ++ show (normDir r)
-
-
-epsilon :: Float
-epsilon = 0.001
 dbg x = trace (show x) x
 cameraRay :: Scalar -> Scalar -> Ray
 cameraRay x y = Ray { rayOrigin = cameraOrigin,

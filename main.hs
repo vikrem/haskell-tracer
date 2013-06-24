@@ -17,15 +17,31 @@ sphereHit ray sphere = case qdformula (dot d d)
 			  c = origin sphere
 			  finalHit roots = rayOrigin ray + mul (best roots) (normDir ray) 
 			  best = head . (filter (>0) )
-sphereShader :: ShaderFunc
-sphereShader hitpoint sphere = map ( round . ( (*) ratio) . fromIntegral  ) $ colour sphere
+{-
+planeHit :: IntersectFunc
+planeHit ray plane
+				| fleq denom epsilon = Nothing
+				| t < 0 = Nothing
+				| otherwise = Just $ rayOrigin ray + mul t (normDir ray)
+				where
+					denom = dot (normDir ray) (normal plane)
+					numer = dot ((origin plane) - (rayOrigin ray)) (normal plane)
+					t = numer / denom
+-}
+
+gouradShader :: Colour -> ShaderFunc
+gouradShader diffuseColor hitpoint surf = map ( round . ( (*) ratio) . fromIntegral  ) $ diffuseColor
 				where
 				ratio = abs $ dot (normalize diffvec) (normalize normal)
-				diffvec = cameraOrigin - (origin sphere)
-				normal = hitpoint - origin sphere
+				diffvec = cameraOrigin - (origin surf)
+				normal = hitpoint - origin surf
 
-scene = [ (Sphere (Vector [0.5,0.5,10]) 1 [140,255,75] sphereHit sphereShader),
-		  (Sphere (Vector [0.0,1.5,8]) 1 [144,144,220] sphereHit sphereShader) ]
+emissionShader :: Colour -> ShaderFunc
+emissionShader emitcolour _ _ = emitcolour
+
+scene = [ 
+		  (Surface (Vector [0.7, 0.7, 2]) 0.25 sphereHit (emissionShader [255, 255, 255]))
+		  ]
 width = 800
 height = 800
 
