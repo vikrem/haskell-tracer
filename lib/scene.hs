@@ -9,6 +9,8 @@ import Lib.Image
 import Lib.Shader
 import Lib.Math
 import Debug.Trace
+
+-- Background colour for when rays don't hit anything
 bgcolour = [0,0,0]
 
 type Scene = [Surface]
@@ -25,12 +27,13 @@ data Ray = Ray { rayOrigin :: Vector, normDir :: Vector }
 instance Show Ray where
 	show r = "[RAY] Origin: " ++ show (rayOrigin r) ++ " Dir: " ++ show (normDir r)
 dbg x = trace (show x) x
+
 cameraRay :: Scalar -> Scalar -> Ray
 cameraRay x y = Ray { rayOrigin = cameraOrigin,
 				  normDir = normalize distvec }
 				  where
 				  distvec = Vector [x, y, 1.0] - cameraOrigin
-vecFwd = Vector [0, 0, 1]
+
 testRay :: Scene -> Ray -> Colour
 testRay s r = case hitresult of
 				Just hitpoint -> (shader obj) hitpoint obj
