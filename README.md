@@ -3,4 +3,7 @@ haskell-tracer
 
 A basic Raytracer written in Haskell.
 
-The code is quite ugly -- I'm aware. This project is still quite a work in progress.
+This project is still quite a work in progress! Please excuse the messy code.
+
+Status of things so far:
+![Screenshot](img/shader1.png)
