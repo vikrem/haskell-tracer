@@ -23,9 +23,7 @@ data Surface = Surface {
 						shader :: ShaderFunc
 						}
 
-data Ray = Ray { rayOrigin :: Vector, normDir :: Vector }
-instance Show Ray where
-	show r = "[RAY] Origin: " ++ show (rayOrigin r) ++ " Dir: " ++ show (normDir r)
+data Ray = Ray { rayOrigin :: Vector, normDir :: Vector } deriving (Show, Eq)
 dbg x = trace (show x) x
 
 cameraRay :: Scalar -> Scalar -> Ray
