@@ -1,10 +1,13 @@
 -- Primitive math funcs for stuff
+module Lib.Prims where
+
 import Lib.Math
 import Lib.Shader
 import Lib.Vector
 import Lib.Scene
 
 
+-- Determine if a ray has collided with a sphere of a given radius
 sphereHit :: Scalar -> IntersectFunc
 sphereHit radius ray sphere = case solution of
 				   Just roots -> Just $ finalHit roots
@@ -19,6 +22,9 @@ sphereHit radius ray sphere = case solution of
 									((dot (o - c) (o - c)) - r^2)
 			  finalHit roots = rayOrigin ray + mul (best roots) (normDir ray) 
 			  best = head . (filter (>0) )
+
+-- Determine if a ray has collided with an infinite plane
+-- Currently commented out due to lack of a good plane shader
 {-
 planeHit :: IntersectFunc
 planeHit ray plane
