@@ -6,9 +6,7 @@ import Lib.Scene
 
 
 sphereHit :: Scalar -> IntersectFunc
-sphereHit radius ray sphere = case qdformula (dot d d)
-							 (dot (mul 2 (o - c)) d)
-							 ((dot (o - c) (o - c)) - r^2) of
+sphereHit radius ray sphere = case solution of
 				   Just roots -> Just $ finalHit roots
 				   Nothing -> Nothing
 			  where
@@ -16,6 +14,9 @@ sphereHit radius ray sphere = case qdformula (dot d d)
 			  o = rayOrigin ray
 			  r = radius
 			  c = origin sphere
+			  solution = qdformula (dot d d)
+									(dot (mul 2 (o - c)) d)
+									((dot (o - c) (o - c)) - r^2)
 			  finalHit roots = rayOrigin ray + mul (best roots) (normDir ray) 
 			  best = head . (filter (>0) )
 {-
