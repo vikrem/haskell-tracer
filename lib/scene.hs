@@ -3,6 +3,7 @@ module Lib.Scene where
 import Data.Ord
 import Data.List
 import Data.Function
+import Data.Monoid
 
 import Lib.Vector
 import Lib.Image
@@ -33,15 +34,16 @@ cameraRay x y = Ray { rayOrigin = cameraOrigin,
 				  distvec = Vector [x, y, 1.0] - cameraOrigin
 
 testRay :: Scene -> Ray -> Colour
-testRay s r = case hitresult of
-				Just hitpoint -> (shader obj) hitpoint obj
-				Nothing -> bgcolour
+testRay s r
+			| length allhits == 0 = bgcolour -- Cant do allhits == []
+			| otherwise = 
+				case hitresult of
+					Just hitpoint -> (shader obj) hitpoint obj
+					Nothing -> bgcolour
 			where
-				(obj, hitresult) = minimumBy (hitCompare `on` snd) [ (obj, ((hit obj) r obj)) | obj <- s]
-				hitCompare (Just x) (Just y) = compare x y
-				hitCompare (Just x) Nothing = LT
-				hitCompare Nothing (Just y) = GT
-				hitCompare _ _ = EQ
+				allhits = hasValue $ [ (obj, ((hit obj) r obj)) | obj <- s]
+				(obj, hitresult) = minimumBy (compare `on` snd) allhits 
+				hasValue = filter ((/=) Nothing . snd)
 
 render :: Scene -> Integer -> Integer -> Image
 render scene width height = (width, height, img)
