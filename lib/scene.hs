@@ -15,9 +15,9 @@ bgcolour = [0,0,0]
 
 type Scene = [Surface]
 type IntersectFunc = Ray -> Surface -> Maybe Vector -- Return the hitpoint (or lack of) on a surface via a ray
-type ShaderFunc = Vector -> Surface -> Colour -- Take in a hitpoint and return a colour
+type ShaderFunc = Vector -> Surface -> Scene -> Colour -- Take in a hitpoint, the object, the scene, and return a colour
 type Traceresult = Maybe (Surface, Colour) -- Result of a raytrace, the first hit object and it's colour from shading
-data ObjectType = Light | Object -- For doing light calculations later, we'll need to know which mesh are light and which are not
+data ObjectType = Emit | Absorb -- For doing light calculations later, we'll need to know which mesh are light and which are not
 data Surface = Surface {
 						surftype :: ObjectType, -- Does this object emit or absorb light?
 						origin :: Vector, -- All surfaces have an origin
@@ -51,7 +51,7 @@ hitObjects s r
 			| length allhits == 0 = Nothing
 			| otherwise = 
 				case hitresult of
-					Just hitpoint -> Just (obj, (shader obj) hitpoint obj)
+					Just hitpoint -> Just (obj, (shader obj) hitpoint obj s)
 					_ -> Nothing
 			where
 				allhits = hasValue $ [ (obj, ((hit obj) r obj)) | obj <- s]
