@@ -2,7 +2,6 @@
 module Lib.Prims where
 
 import Lib.Math
-import Lib.Shader
 import Lib.Vector
 import Lib.Scene
 

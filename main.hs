@@ -28,8 +28,8 @@ emissionShader emitcolour _ _ = emitcolour
 
 -- List of objects in our scene
 scene = [ 
-		  (Surface (Vector [0.7, 0.7, 1]) (sphereHit 0.25) (cameraShader [0, 165, 255] )),
-		  (Surface (Vector [0.3, 0.3, 2]) (sphereHit 0.25) (cameraShader [255, 165, 0] ))
+		  (Surface Object (Vector [0.7, 0.7, 1]) (sphereHit 0.25) (cameraShader [0, 165, 255] )),
+		  (Surface Object (Vector [0.3, 0.3, 2]) (sphereHit 0.25) (cameraShader [255, 165, 0] ))
 		  ]
 -- Image info
 width = 800

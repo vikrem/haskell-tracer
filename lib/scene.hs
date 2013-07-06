@@ -7,7 +7,6 @@ import Data.Monoid
 
 import Lib.Vector
 import Lib.Image
-import Lib.Shader
 import Lib.Math
 import Debug.Trace
 
@@ -17,8 +16,10 @@ bgcolour = [0,0,0]
 type Scene = [Surface]
 type IntersectFunc = Ray -> Surface -> Maybe Vector -- Return the hitpoint (or lack of) on a surface via a ray
 type ShaderFunc = Vector -> Surface -> Colour -- Take in a hitpoint and return a colour
+type Traceresult = Maybe (Surface, Colour) -- Result of a raytrace, the first hit object and it's colour from shading
 data ObjectType = Light | Object -- For doing light calculations later, we'll need to know which mesh are light and which are not
 data Surface = Surface {
+						surftype :: ObjectType, -- Does this object emit or absorb light?
 						origin :: Vector, -- All surfaces have an origin
 						hit :: IntersectFunc, -- A primitive-based ray-collision func found in prims.hs
 						shader :: ShaderFunc -- A pixel/fragment shader
@@ -35,14 +36,23 @@ cameraRay x y = Ray { rayOrigin = cameraOrigin,
 				  where
 				  distvec = Vector [x, y, 1.0] - cameraOrigin
 
--- Test a ray against each object in the scene. Find the closest object that the ray collided with (if any) and run its pixel shader
-testRay :: Scene -> Ray -> Colour
-testRay s r
-			| length allhits == 0 = bgcolour -- Cant do allhits == []
+getTraceColour :: Traceresult -> Colour
+getTraceColour tr = case tr of
+						Just (surf, col) -> col
+						Nothing -> bgcolour
+
+-- Gets the first hit object from the ray and returns the colour
+getPixelForRay :: Scene -> Ray -> Colour
+getPixelForRay s r = getTraceColour $ hitObjects s r
+
+-- Test a ray against each object in the scene. Find the closest object that the ray collided with (if any) and return the obj + shader
+hitObjects :: Scene -> Ray -> Traceresult
+hitObjects s r
+			| length allhits == 0 = Nothing
 			| otherwise = 
 				case hitresult of
-					Just hitpoint -> (shader obj) hitpoint obj
-					Nothing -> bgcolour
+					Just hitpoint -> Just (obj, (shader obj) hitpoint obj)
+					_ -> Nothing
 			where
 				allhits = hasValue $ [ (obj, ((hit obj) r obj)) | obj <- s]
 				(obj, hitresult) = minimumBy (compare `on` snd) allhits 
@@ -52,7 +62,7 @@ testRay s r
 render :: Scene -> Integer -> Integer -> Image
 render scene width height = (width, height, img)
 				where
-					img = [ testRay scene (cameraRay (screenToWorld lx width) (screenToWorld ly height)) |
+					img = [ getPixelForRay scene (cameraRay (screenToWorld lx width) (screenToWorld ly height)) |
 							ly <- [0..height-1],
 							lx <- [0..width-1]]
 
