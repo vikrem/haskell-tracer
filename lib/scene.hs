@@ -11,13 +11,13 @@ import Lib.Math
 import Debug.Trace
 
 -- Background colour for when rays don't hit anything
-bgcolour = [0,0,0]
+bgcolour = [0,0,0] :: Colour
 
 type Scene = [Surface]
 type IntersectFunc = Ray -> Surface -> Maybe Vector -- Return the hitpoint (or lack of) on a surface via a ray
 type ShaderFunc = Vector -> Surface -> Scene -> Colour -- Take in a hitpoint, the object, the scene, and return a colour
 type Traceresult = Maybe (Surface, Colour) -- Result of a raytrace, the first hit object and it's colour from shading
-data ObjectType = Emit | Absorb -- For doing light calculations later, we'll need to know which mesh are light and which are not
+data ObjectType = Emit | Absorb deriving (Show, Eq) -- For doing light calculations later, we'll need to know which mesh are light and which are not
 data Surface = Surface {
 						surftype :: ObjectType, -- Does this object emit or absorb light?
 						origin :: Vector, -- All surfaces have an origin
@@ -47,6 +47,7 @@ getPixelForRay s r = getTraceColour $ hitObjects s r
 
 -- Test a ray against each object in the scene. Find the closest object that the ray collided with (if any) and return the obj + shader
 hitObjects :: Scene -> Ray -> Traceresult
+hitObjects [] _ = Nothing
 hitObjects s r
 			| length allhits == 0 = Nothing
 			| otherwise = 
