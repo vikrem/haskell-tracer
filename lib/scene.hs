@@ -4,6 +4,7 @@ import Data.Ord
 import Data.List
 import Data.Function
 import Data.Monoid
+import Text.Show.Functions
 
 import Lib.Vector
 import Lib.Image
@@ -23,7 +24,7 @@ data Surface = Surface {
 						origin :: Vector, -- All surfaces have an origin
 						hit :: IntersectFunc, -- A primitive-based ray-collision func found in prims.hs
 						shader :: ShaderFunc -- A pixel/fragment shader
-						}
+						} deriving (Show)
 
 -- Rays start from somwhere and proceed infinitely in a direction
 data Ray = Ray { rayOrigin :: Vector, normDir :: Vector } deriving (Show, Eq)

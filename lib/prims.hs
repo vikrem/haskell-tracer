@@ -8,9 +8,7 @@ import Lib.Scene
 
 -- Determine if a ray has collided with a sphere of a given radius
 sphereHit :: Scalar -> IntersectFunc
-sphereHit radius ray sphere = case solution of
-				   Just roots -> Just $ finalHit roots
-				   Nothing -> Nothing
+sphereHit radius ray sphere = solution >>= finalHit
 			  where
 			  d = normDir ray
 			  o = rayOrigin ray
@@ -19,8 +17,12 @@ sphereHit radius ray sphere = case solution of
 			  solution = qdformula (dot d d)
 									(dot (mul 2 (o - c)) d)
 									((dot (o - c) (o - c)) - r^2)
-			  finalHit roots = rayOrigin ray + mul (best roots) (normDir ray) 
-			  best = head . (filter (>0) )
+			  finalHit roots
+						| length posroots == 0 = Nothing
+						| otherwise = Just $ rayOrigin ray + mul best (normDir ray) 
+						where
+						posroots = (filter (>0)) roots
+						best = head posroots
 
 -- Determine if a ray has collided with an infinite plane
 -- Currently commented out due to lack of a good plane shader
