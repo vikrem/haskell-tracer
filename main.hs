@@ -44,14 +44,26 @@ isLightVisible org scn = length (filter reachable lights) > 0
 emissionShader :: Colour -> ShaderFunc
 emissionShader emitcolour _ _ _ = emitcolour
 
+-- Make pretty list of spheres
+makeSphereArray = map makeSphere positions
+				where
+				makeSphere org = (Surface Absorb org (sphereHit 0.20) (cameraLinFalloffShader [0,165,255] 6))
+				positions = [ (Vector [xpos, ypos, zpos]) | xpos <- xrange,
+												ypos <- yrange,
+												zpos <- zrange ]
+				xrange = [-1.0,-0.6..2.0] :: [Scalar]
+				yrange = [1.1] :: [Scalar]
+				zrange = [2.0..5.0] :: [Scalar]
+
 -- List of objects in our scene
 scene = [ 
-		  (Surface Absorb (Vector [0.3, 0.8, 3]) (sphereHit 0.3) (harshShader [0, 165, 255] )),
-		  (Surface Absorb (Vector [0.3, 1.5, 3]) (sphereHit 0.20) (harshShader [125, 165, 255] )),
-		  (Surface Emit (Vector [0.3, 0.2, 3]) (sphereHit 0.20) (emissionShader [255, 255, 255] ))
+		  (Surface Absorb (Vector [0.3, 0.8, 3]) (sphereHit 0.3) (cameraLinFalloffShader [0, 165, 255] 2 )),
+		  (Surface Absorb (Vector [0.3, 1.5, 3]) (sphereHit 0.20) (cameraLinFalloffShader [125, 165, 255] 2 )),
+		  (Surface Emit (Vector [0.3, 0.2, 3]) (sphereHit 0.20) (cameraLinFalloffShader [255, 255, 255] 2 ))
 		  ]
 -- Image info
 width = 800
 height = 800
 
 main = writeFile "out.ppm" $ create_ppm $ render scene width height
+prettyMain = writeFile "out.ppm" $ create_ppm $ render makeSphereArray width height
